@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bitcoinin arvon seuranta</title>
+  <style>
+    #bitcoin-price {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #bitcoin-analysis {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bitcoinin arvon seuranta</h1>
+  <div id="bitcoin-price"></div>
+  <div id="bitcoin-analysis"></div>
+
+  <script>
+    // Hae Bitcoinin hinta CoinGecko API:sta
+    function getBitcoinPrice() {
+      fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.bitcoin && data.bitcoin.usd) {
+            var price = data.bitcoin.usd;
+            document.getElementById('bitcoin-price').textContent = 'Bitcoinin hinta: $' + price.toFixed(2);
+
+            // Tee arvio Bitcoinin arvoon vaikuttaneista tekijöistä
+            var analysis = '';
+            if (price > 50000) {
+              analysis = 'Bitcoinin hinta on korkea, mikä voi johtua esimerkiksi lisääntyneestä instituutio- tai sijoittajaintressistä.';
+            } else if (price < 50000) {
+              analysis = 'Bitcoinin hinta on alhainen, mikä voi johtua esimerkiksi sääntelytai markkinatilanteen epävarmuudesta.';
+            } else {
+              analysis = 'Bitcoinin hinta pysyy vakaana.';
+            }
+            document.getElementById('bitcoin-analysis').textContent = 'Analyysi: ' + analysis;
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+
+    // Päivitä Bitcoinin hinta 10 sekunnin välein
+    setInterval(getBitcoinPrice, 10000);
+  </script>
+</body>
+</html>
